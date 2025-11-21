@@ -1,3 +1,8 @@
+export const TransactionType = {
+    Income: 'income',
+    Expense: 'expense',
+};
+
 export const INCOME_CATEGORIES = [
   "Зарплата",
   "Інвестиції",

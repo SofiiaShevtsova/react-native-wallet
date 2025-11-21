@@ -11,7 +11,11 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { RequestTransaction } from "../types";
 import { useFinance } from "../context/FinanceContext";
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "../constants/constants";
+import {
+  EXPENSE_CATEGORIES,
+  INCOME_CATEGORIES,
+  TransactionType,
+} from "../constants/constants";
 
 const initialTransactionState: RequestTransaction = {
   amount: 0,
@@ -35,7 +39,7 @@ const Add = () => {
   };
 
   const activeIncome = useMemo(() => {
-    return transaction.type === "income";
+    return transaction.type === TransactionType.Income;
   }, [transaction.type]);
 
   const availableCategories = useMemo(() => {
@@ -139,7 +143,10 @@ const Add = () => {
         }}
       >
         <Text style={styles.submitButtonText}>
-          Додати {transaction.type === "income" ? "надходження" : "видаток"}
+          Додати{" "}
+          {transaction.type === TransactionType.Income
+            ? "надходження"
+            : "видаток"}
         </Text>
       </Pressable>
     </View>

@@ -4,7 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 
 import BarChart from '../components/BarChart';
 import { useFinance } from '../context/FinanceContext';
-import { MONTH_NAMES_UA } from '../constants/constants';
+import { MONTH_NAMES_UA, TransactionType } from '../constants/constants';
 import { formatAmount } from '../utils/formatAmount';
 
 const getCurrentYear = () => new Date().getFullYear();
@@ -22,7 +22,7 @@ const Statistics = () => {
     let total = 0; 
 
     transactions.forEach(t => {
-      if (t.type === 'income') {
+      if (t.type === TransactionType.Income) {
         total += t.amount;
       } else {
         total -= t.amount;
@@ -36,7 +36,7 @@ const Statistics = () => {
         transactionDate.getMonth() === selectedMonth &&
         transactionDate.getFullYear() === selectedYear
       ) {
-        if (t.type === 'income') {
+        if (t.type === TransactionType.Income) {
           income += t.amount;
         } else {
           expense += t.amount;
