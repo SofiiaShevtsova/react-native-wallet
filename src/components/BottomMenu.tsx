@@ -14,7 +14,7 @@ const BottomTabs = () => {
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: "#FFFFFF",
-          height: 60,
+          height: 110,
           paddingHorizontal: 10,
           paddingTop: 8,
           borderTopWidth: 0,
