@@ -6,9 +6,8 @@ const config = ({ config }: { config: ExpoConfig }): ExpoConfig => {
 
     android: {
       package: "com.Sofi_Sova.mywallet",
-      // Додаємо також 'adaptiveIcon' для сучасного відображення іконок
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/wallet.svg",
         backgroundColor: "#ffffff",
       },
     },
