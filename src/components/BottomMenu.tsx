@@ -31,7 +31,7 @@ const BottomTabs = () => {
       }}
     >
       <Tab.Screen
-        name="Table"
+        name="Транзакції"
         component={Table}
         options={{
           headerShown: false,
@@ -41,7 +41,7 @@ const BottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Add"
+        name="Додати"
         component={Add}
         options={{
           headerShown: false,
@@ -51,7 +51,7 @@ const BottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Statistics"
+        name="Статистика"
         component={Statistics}
         options={{
           headerShown: false,

@@ -21,7 +21,7 @@ const Table = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Transactions</Text>
+      <Text style={styles.header}>Всі транзакції</Text>
       {transactions.length > 0 ? (
         <FlatList
           data={transactions}

@@ -8,12 +8,14 @@ import {
   Alert,
   Keyboard,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { RequestTransaction } from "../types";
 import { useFinance } from "../context/FinanceContext";
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "../constants/constants";
 
 const initialTransactionState: RequestTransaction = {
   amount: 0,
-  category: "",
+  category: EXPENSE_CATEGORIES[0],
   description: "",
   type: "expense",
 };
@@ -25,16 +27,22 @@ const Add = () => {
 
   const { addTransaction } = useFinance();
 
-  const activeIncome = useMemo(() => {
-    return transaction.type === "income";
-  }, [transaction.type]);
-
   const onChange = (field: keyof RequestTransaction, value: string) => {
     setTransaction((prev) => ({
       ...prev,
       [field]: field === "amount" ? Number(value) : value,
     }));
   };
+
+  const activeIncome = useMemo(() => {
+    return transaction.type === "income";
+  }, [transaction.type]);
+
+  const availableCategories = useMemo(() => {
+    const categoryArray = activeIncome ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+    onChange("category", categoryArray[0]);
+    return categoryArray;
+  }, [activeIncome]);
 
   const onSubmit = async () => {
     if (transaction.amount <= 0) {
@@ -45,14 +53,14 @@ const Add = () => {
       const newTransition = await addTransaction(transaction);
 
       if (newTransition) {
-        Alert.alert("success", "Transaction added successfully");
+        Alert.alert("Успішно", "Транзакцію додано");
         setTransaction(initialTransactionState);
         Keyboard.dismiss();
       } else {
-        Alert.alert("error", "Can't add transaction");
+        Alert.alert("Помилка", "Неможливо додати транзакцію");
       }
     } catch (error) {
-      Alert.alert("error", "Something went wrong");
+      Alert.alert("Помилка", "Не вдало");
     }
   };
 
@@ -60,7 +68,12 @@ const Add = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Створити нову транзакцію</Text>
 
-      <View style={styles.typeToggle}>
+      <View
+        style={{
+          ...styles.typeToggle,
+          borderColor: activeIncome ? "#76BB4D" : "#F06292",
+        }}
+      >
         <Pressable
           onPress={() => onChange("type", "income")}
           style={[
@@ -71,7 +84,7 @@ const Add = () => {
           <Text
             style={[styles.typeText, activeIncome && styles.typeTextActive]}
           >
-            Income
+            Надходження
           </Text>
         </Pressable>
         <Pressable
@@ -84,34 +97,50 @@ const Add = () => {
           <Text
             style={[styles.typeText, !activeIncome && styles.typeTextActive]}
           >
-            Expense
+            Видатки
           </Text>
         </Pressable>
       </View>
 
       <TextInput
         style={styles.input}
-        placeholder="amoung"
+        placeholder="сума"
         keyboardType="numeric"
         value={transaction.amount === 0 ? "" : transaction.amount.toString()}
         onChangeText={(value) => onChange("amount", value)}
       />
-      {["category", "description"].map((field) => (
-        <TextInput
-          key={field}
-          nativeID={field}
-          placeholder={field}
-          style={styles.input}
-          value={
-            transaction[field as keyof RequestTransaction]?.toString() || ""
-          }
-          onChangeText={(value) => {
-            onChange(field as keyof RequestTransaction, value);
-          }}
-        />
-      ))}
-      <Pressable onPress={onSubmit} style={styles.submitButton}>
-        <Text style={styles.submitButtonText}>ADD {transaction.type}</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={transaction.category}
+          onValueChange={(itemValue: string) => onChange("category", itemValue)}
+          style={styles.picker}
+          placeholder="оберіть категорію"
+          itemStyle={{ fontSize: 12 }}
+        >
+          {availableCategories.map((cat) => (
+            <Picker.Item key={cat} label={cat} value={cat} />
+          ))}
+        </Picker>
+      </View>
+      <TextInput
+        nativeID="description"
+        placeholder="додайте опис при необхідності"
+        style={styles.input}
+        value={transaction.description?.toString() || ""}
+        onChangeText={(value) => {
+          onChange("description", value);
+        }}
+      />
+      <Pressable
+        onPress={onSubmit}
+        style={{
+          ...styles.submitButton,
+          backgroundColor: activeIncome ? "#76BB4D" : "#F06292",
+        }}
+      >
+        <Text style={styles.submitButtonText}>
+          Додати {transaction.type === "income" ? "надходження" : "видаток"}
+        </Text>
       </Pressable>
     </View>
   );
@@ -148,7 +177,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
     overflow: "hidden",
-    borderColor: "#76BB4D",
     borderWidth: 1,
   },
   typeButton: {
@@ -170,8 +198,22 @@ const styles = StyleSheet.create({
   typeTextActive: {
     color: "#fff",
   },
+  pickerContainer: {
+    backgroundColor: "#FFFFFF",
+    borderColor: "#E0E0E0",
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 15,
+    overflow: "hidden",
+    justifyContent: "center",
+    height: 50,
+  },
+  picker: {
+    paddingVertical: 8,
+    width: "100%",
+    color: "#333333",
+  },
   submitButton: {
-    backgroundColor: "#388E3C",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
