@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 10,
     textAlign: "center",
+    marginTop: 30,
   },
   cardsContainer: {
     paddingHorizontal: 20,
