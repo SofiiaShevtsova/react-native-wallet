@@ -207,13 +207,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   header: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#333",
-    padding: 20,
-    paddingBottom: 10,
-    textAlign: "center",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 25,
     marginTop: 30,
+    textAlign: "center",
+    color: "#333333",
   },
   cardsContainer: {
     paddingHorizontal: 20,
