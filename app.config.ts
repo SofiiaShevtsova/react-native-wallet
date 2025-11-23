@@ -5,13 +5,13 @@ const config = ({ config }: { config: ExpoConfig }): ExpoConfig => {
     ...config,
 
     name: "Wallet_Sofi",
-    slug: "wallet_sofi",
+    slug: "my-wallet-clean",
 
     android: {
       package: "com.Sofi_Sova.mywallet",
       adaptiveIcon: {
-        foregroundImage: "./assets/wallet.svg",
-        backgroundColor: "#ffffff",
+        foregroundImage: "./assets/wallet.png",
+        backgroundColor: "#000",
       },
     },
 
