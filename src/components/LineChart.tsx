@@ -2,6 +2,9 @@ import { Fragment, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Svg, { Polyline, Circle, Line } from "react-native-svg";
 import { MONTH_NAMES_UA } from "../constants/constants";
+import { Dimensions } from "react-native";
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 interface LineChartProps {
   incomeData: number[];
@@ -17,6 +20,10 @@ const LineChart = ({ incomeData, expenseData, maxAmount }: LineChartProps) => {
     color: string;
   } | null>(null);
 
+  const CHART_HEIGHT = 200;
+  const CHART_WIDTH = SCREEN_WIDTH - 100;
+  const PADDING = 5;
+
   if (maxAmount === 0) {
     return (
       <View style={styles.noDataContainer}>
@@ -27,9 +34,6 @@ const LineChart = ({ incomeData, expenseData, maxAmount }: LineChartProps) => {
     );
   }
 
-  const CHART_HEIGHT = 200;
-  const CHART_WIDTH = 320;
-  const PADDING = 5;
   const stepX = (CHART_WIDTH - PADDING * 2) / (incomeData.length - 1);
 
   const getY = (value: number) => {
@@ -172,7 +176,7 @@ const LineChart = ({ incomeData, expenseData, maxAmount }: LineChartProps) => {
         </View>
       )}
 
-      <View style={styles.xLabelsContainer}>
+      <View style={[styles.xLabelsContainer, { width: CHART_WIDTH }]}>
         {MONTH_NAMES_UA.map((m, index) => (
           <View key={index} style={styles.xLabelWrapper}>
             <Text style={styles.xLabel}>{m.slice(0, 3)}</Text>
@@ -191,6 +195,7 @@ const styles = StyleSheet.create({
   yLabelsContainer: {
     justifyContent: "space-between",
     alignItems: "flex-end",
+    width: 40,
     paddingRight: 2,
   },
   yLabel: {
@@ -200,10 +205,8 @@ const styles = StyleSheet.create({
   },
   xLabelsContainer: {
     position: "absolute",
-    left: 18,
+    left: 40,
     top: 210,
-    width: 320 - 40 * 2,
-    padding: 2,
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -216,7 +219,6 @@ const styles = StyleSheet.create({
     color: "#444",
     textAlign: "center",
     transform: [{ rotate: "-90deg" }],
-    width: 28,
   },
   noDataContainer: {
     height: 150,

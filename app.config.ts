@@ -11,7 +11,7 @@ const config = ({ config }: { config: ExpoConfig }): ExpoConfig => {
       package: "com.Sofi_Sova.mywallet",
       adaptiveIcon: {
         foregroundImage: "./assets/wallet.png",
-        backgroundColor: "#000",
+        backgroundColor: "#000000",
       },
     },
 

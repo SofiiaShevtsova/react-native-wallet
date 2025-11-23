@@ -302,7 +302,8 @@ const styles = StyleSheet.create({
   chartSection: {
     backgroundColor: "white",
     borderRadius: 12,
-    padding: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
     marginHorizontal: 20,
     marginBottom: 20,
     shadowColor: "#000",
