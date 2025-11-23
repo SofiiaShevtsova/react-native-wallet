@@ -23,12 +23,11 @@ const BarChart: React.FC<BarChartProps> = ({ data, maxAmount }) => {
       {data.map((item, index) => {
         const barLength =
           maxAmount > 0 ? (item.amount / maxAmount) * maxBarLength : 0;
-        const percentage = maxAmount > 0 ? (item.amount / maxAmount) * 100 : 0;
 
         return (
           <View key={item.category} style={styles.barItem}>
             <Text style={styles.categoryLabel}>
-              {item.category} ({percentage.toFixed(0)}%)
+              {item.category}
             </Text>
             <View style={styles.barWrapper}>
               <View
@@ -50,7 +49,6 @@ const BarChart: React.FC<BarChartProps> = ({ data, maxAmount }) => {
 
 const styles = StyleSheet.create({
   chartContainer: {
-    // Стиль контейнера для BarChart
   },
   chartEmptyText: {
     textAlign: "center",

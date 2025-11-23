@@ -4,6 +4,9 @@ const config = ({ config }: { config: ExpoConfig }): ExpoConfig => {
   return {
     ...config,
 
+    name: "Wallet_Sofi",
+    slug: "wallet_sofi",
+
     android: {
       package: "com.Sofi_Sova.mywallet",
       adaptiveIcon: {

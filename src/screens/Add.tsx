@@ -106,6 +106,7 @@ const Add = () => {
         </Pressable>
       </View>
 
+      <Text style={styles.label}>Вкажіть суму</Text>
       <TextInput
         style={styles.input}
         placeholder="сума"
@@ -113,6 +114,7 @@ const Add = () => {
         value={transaction.amount === 0 ? "" : transaction.amount.toString()}
         onChangeText={(value) => onChange("amount", value)}
       />
+      <Text style={styles.label}>Виберіть категорію</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={transaction.category}
@@ -126,9 +128,10 @@ const Add = () => {
           ))}
         </Picker>
       </View>
+      <Text style={styles.label}>Додайте опис при необхідності</Text>
       <TextInput
         nativeID="description"
-        placeholder="додайте опис при необхідності"
+        placeholder="..."
         style={styles.input}
         value={transaction.description?.toString() || ""}
         onChangeText={(value) => {
@@ -204,6 +207,11 @@ const styles = StyleSheet.create({
   },
   typeTextActive: {
     color: "#fff",
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 4,
+    color: "#333333",
   },
   pickerContainer: {
     backgroundColor: "#FFFFFF",
