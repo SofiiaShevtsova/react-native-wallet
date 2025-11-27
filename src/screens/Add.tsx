@@ -32,10 +32,33 @@ const Add = () => {
   const { addTransaction } = useFinance();
 
   const onChange = (field: keyof RequestTransaction, value: string) => {
-    setTransaction((prev) => ({
-      ...prev,
-      [field]: field === "amount" ? Number(value) : value,
-    }));
+    if (field === "amount") {
+      const cleanedValue = value.replace(/,/g, ".");
+
+      if (cleanedValue === "" || cleanedValue === ".") {
+        setTransaction((prev) => ({
+          ...prev,
+          [field]: 0,
+        }));
+        return;
+      }
+
+      const numericValue = Number(cleanedValue);
+
+      if (isNaN(numericValue)) {
+        return;
+      }
+
+      setTransaction((prev) => ({
+        ...prev,
+        [field]: numericValue,
+      }));
+    } else {
+      setTransaction((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
   };
 
   const activeIncome = useMemo(() => {
@@ -111,7 +134,7 @@ const Add = () => {
         style={styles.input}
         placeholder="сума"
         keyboardType="numeric"
-        value={transaction.amount === 0 ? "" : transaction.amount.toString()}
+        value={transaction.amount.toString()}
         onChangeText={(value) => onChange("amount", value)}
       />
       <Text style={styles.label}>Виберіть категорію</Text>
@@ -146,7 +169,7 @@ const Add = () => {
         }}
       >
         <Text style={styles.submitButtonText}>
-          Додати{" "}
+          Додати
           {transaction.type === TransactionType.Income
             ? "надходження"
             : "видаток"}
