@@ -22,7 +22,7 @@ const TransactionItem: React.FC<{ transaction: Transaction }> = ({ transaction }
     style: 'currency',
     currency: 'UAH',
     minimumFractionDigits: 2,
-  }).format(transaction.amount);
+  }).format(Number(transaction.amount));
 
   return (
     <View style={styles.itemContainer}>

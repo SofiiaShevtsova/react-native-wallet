@@ -42,9 +42,9 @@ const Statistics = () => {
 
     transactions.forEach((t) => {
       if (t.type === TransactionType.Income) {
-        total += t.amount;
+        total += Number(t.amount);
       } else {
-        total -= t.amount;
+        total -= Number(t.amount);
       }
     });
 
@@ -58,18 +58,19 @@ const Statistics = () => {
         transactionYear === selectedYear
       ) {
         if (t.type === TransactionType.Income) {
-          income += t.amount;
+          income += Number(t.amount);
         } else {
-          expense += t.amount;
-          expenseMap[t.category] = (expenseMap[t.category] || 0) + t.amount;
+          expense += Number(t.amount);
+          expenseMap[t.category] =
+            (expenseMap[t.category] || 0) + Number(t.amount);
         }
       }
 
       if (transactionYear === selectedYear) {
         if (t.type === TransactionType.Income) {
-          yearlyIncome[transactionMonth] += t.amount;
+          yearlyIncome[transactionMonth] += Number(t.amount);
         } else {
-          yearlyExpense[transactionMonth] += t.amount;
+          yearlyExpense[transactionMonth] += Number(t.amount);
         }
       }
     });

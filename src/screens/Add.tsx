@@ -18,7 +18,7 @@ import {
 } from "../constants/constants";
 
 const initialTransactionState: RequestTransaction = {
-  amount: 0,
+  amount: "",
   category: EXPENSE_CATEGORIES[0],
   description: "",
   type: "expense",
@@ -38,20 +38,22 @@ const Add = () => {
       if (cleanedValue === "" || cleanedValue === ".") {
         setTransaction((prev) => ({
           ...prev,
-          [field]: 0,
+          [field]: "",
         }));
         return;
       }
 
-      const numericValue = Number(cleanedValue);
-
-      if (isNaN(numericValue)) {
+      if (isNaN(Number(cleanedValue))) {
         return;
       }
 
       setTransaction((prev) => ({
         ...prev,
-        [field]: numericValue,
+        [field]:
+          cleanedValue.startsWith("0") &&
+          !Number(cleanedValue).toString().startsWith("0")
+            ? cleanedValue.slice(1)
+            : cleanedValue,
       }));
     } else {
       setTransaction((prev) => ({
@@ -72,7 +74,7 @@ const Add = () => {
   }, [activeIncome]);
 
   const onSubmit = async () => {
-    if (transaction.amount <= 0) {
+    if (transaction.amount || Number(transaction.amount) <= 0) {
       return;
     }
 
@@ -134,7 +136,7 @@ const Add = () => {
         style={styles.input}
         placeholder="сума"
         keyboardType="numeric"
-        value={transaction.amount.toString()}
+        value={transaction.amount}
         onChangeText={(value) => onChange("amount", value)}
       />
       <Text style={styles.label}>Виберіть категорію</Text>
@@ -163,9 +165,11 @@ const Add = () => {
       />
       <Pressable
         onPress={onSubmit}
+        disabled={!transaction.amount}
         style={{
           ...styles.submitButton,
           backgroundColor: activeIncome ? "#76BB4D" : "#F06292",
+          opacity: !transaction.amount ? 0.5 : 1,
         }}
       >
         <Text style={styles.submitButtonText}>
