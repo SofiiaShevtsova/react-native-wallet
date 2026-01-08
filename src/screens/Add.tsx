@@ -74,7 +74,7 @@ const Add = () => {
   }, [activeIncome]);
 
   const onSubmit = async () => {
-    if (transaction.amount || Number(transaction.amount) <= 0) {
+    if (!transaction.amount || Number(transaction.amount) <= 0) {
       return;
     }
 
@@ -173,10 +173,10 @@ const Add = () => {
         }}
       >
         <Text style={styles.submitButtonText}>
-          Додати
+          {'Додати '}
           {transaction.type === TransactionType.Income
-            ? "надходження"
-            : "видаток"}
+            ? " надходження"
+            : " видаток"}
         </Text>
       </Pressable>
     </View>
