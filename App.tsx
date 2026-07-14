@@ -7,21 +7,34 @@ import Onboarding from "./src/screens/Onboarding";
 import BottomTabs from "./src/components/BottomMenu";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 import { FinanceProvider } from "./src/context/FinanceContext";
+import { Languages } from "./src/constants/constants";
+import { LocaleProvider } from "./src/context/LocaleContext";
 
 const Root = () => {
   const { userId, loading } = useAuth();
-  const [isOnboarded, setIsOnboarded] = useState<boolean | null>(null);
+  const [settings, setSettings] = useState<{
+    onboarded: boolean;
+    language: Languages | null;
+    currency: string | null;
+  } | null>(null);
 
   useEffect(() => {
-    const checkOnboarding = async () => {
-      const value = await AsyncStorage.getItem("onboarded");
-      setIsOnboarded(value === "true");
+    const loadSettings = async () => {
+      const onboarded = await AsyncStorage.getItem("onboarded");
+      const language = (await AsyncStorage.getItem("language")) as Languages;
+      const currency = await AsyncStorage.getItem("currency");
+
+      setSettings({
+        onboarded: onboarded === "true",
+        language,
+        currency,
+      });
     };
 
-    checkOnboarding();
+    loadSettings();
   }, []);
 
-  if (loading || !userId || isOnboarded === null) {
+  if (loading || !userId || settings === null) {
     return (
       <View
         style={{
@@ -36,21 +49,32 @@ const Root = () => {
     );
   }
 
-  if (!isOnboarded) {
+  if (!settings.onboarded || !settings.language || !settings.currency) {
     return (
       <Onboarding
-        onStart={async () => {
-          await AsyncStorage.setItem("onboarded", "true");
-          setIsOnboarded(true);
+        onFinish={async (language, currency) => {
+          await AsyncStorage.multiSet([
+            ["onboarded", "true"],
+            ["language", language],
+            ["currency", currency],
+          ]);
+
+          setSettings({
+            onboarded: true,
+            language,
+            currency,
+          });
         }}
       />
     );
   }
 
   return (
-    <FinanceProvider userId={userId}>
-      <BottomTabs />
-    </FinanceProvider>
+    <LocaleProvider lng={settings.language} currency={settings.currency}>
+      <FinanceProvider userId={userId}>
+        <BottomTabs lng={settings.language} />
+      </FinanceProvider>
+    </LocaleProvider>
   );
 };
 

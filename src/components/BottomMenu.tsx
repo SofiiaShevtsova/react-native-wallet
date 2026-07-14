@@ -4,10 +4,17 @@ import { Ionicons, Foundation } from "@expo/vector-icons";
 import Table from "../screens/Table";
 import Add from "../screens/Add";
 import Statistics from "../screens/Statistics";
+import { Languages } from "../constants/constants";
+import { FC } from "react";
+import { bottomTabsLocales } from "../locale/bottomTabsLocales";
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabs = () => {
+type BottomTabsProps = { lng: Languages };
+
+const BottomTabs: FC<BottomTabsProps> = ({ lng }) => {
+  const t = bottomTabsLocales[lng];
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -31,7 +38,7 @@ const BottomTabs = () => {
       }}
     >
       <Tab.Screen
-        name="Транзакції"
+        name={t.transactions}
         component={Table}
         options={{
           headerShown: false,
@@ -41,7 +48,7 @@ const BottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Додати"
+        name={t.add}
         component={Add}
         options={{
           headerShown: false,
@@ -51,7 +58,7 @@ const BottomTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Статистика"
+        name={t.statistics}
         component={Statistics}
         options={{
           headerShown: false,

@@ -1,8 +1,10 @@
 import { Fragment, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Svg, { Polyline, Circle, Line } from "react-native-svg";
-import { MONTH_NAMES_UA } from "../constants/constants";
 import { Dimensions } from "react-native";
+import { useLng } from "../context/LocaleContext";
+import { lineChartLocales } from "../locale/lineChartLocales";
+import { getLocale } from "../utils/getLocale";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -13,6 +15,9 @@ interface LineChartProps {
 }
 
 const LineChart = ({ incomeData, expenseData, maxAmount }: LineChartProps) => {
+  const { lng } = useLng();
+  const t = lineChartLocales[lng];
+
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
@@ -27,9 +32,7 @@ const LineChart = ({ incomeData, expenseData, maxAmount }: LineChartProps) => {
   if (maxAmount === 0) {
     return (
       <View style={styles.noDataContainer}>
-        <Text style={styles.noDataText}>
-          Недостатньо даних для побудови графіка за цей рік.
-        </Text>
+        <Text style={styles.noDataText}>{t.noData}</Text>
       </View>
     );
   }
@@ -62,7 +65,7 @@ const LineChart = ({ incomeData, expenseData, maxAmount }: LineChartProps) => {
       <View style={styles.yLabelsContainer}>
         {yLabels.map((val, index) => (
           <Text key={index} style={styles.yLabel}>
-            {Math.round(val).toLocaleString("uk-UA")}
+            {Math.round(val).toLocaleString(getLocale(lng))}
           </Text>
         ))}
       </View>
@@ -171,13 +174,13 @@ const LineChart = ({ incomeData, expenseData, maxAmount }: LineChartProps) => {
           ]}
         >
           <Text style={[styles.tooltipText, { color: tooltip.color }]}>
-            {tooltip.value.toLocaleString("uk-UA")}
+            {tooltip.value.toLocaleString(getLocale(lng))}
           </Text>
         </View>
       )}
 
       <View style={[styles.xLabelsContainer, { width: CHART_WIDTH }]}>
-        {MONTH_NAMES_UA.map((m, index) => (
+        {t.months.map((m, index) => (
           <View key={index} style={styles.xLabelWrapper}>
             <Text style={styles.xLabel}>{m.slice(0, 3)}</Text>
           </View>

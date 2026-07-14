@@ -11,22 +11,23 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { RequestTransaction } from "../types";
 import { useFinance } from "../context/FinanceContext";
-import {
-  EXPENSE_CATEGORIES,
-  INCOME_CATEGORIES,
-  TransactionType,
-} from "../constants/constants";
+import { TransactionType } from "../constants/constants";
+import { useLng } from "../context/LocaleContext";
+import { addLocales } from "../locale/addLocales";
 
 const initialTransactionState: RequestTransaction = {
   amount: "",
-  category: EXPENSE_CATEGORIES[0],
+  category: "",
   description: "",
   type: "expense",
 };
 
 const Add = () => {
+  const { lng } = useLng();
+  const t = addLocales[lng];
+
   const [transaction, setTransaction] = useState<RequestTransaction>(
-    initialTransactionState
+    initialTransactionState,
   );
 
   const { addTransaction } = useFinance();
@@ -68,10 +69,10 @@ const Add = () => {
   }, [transaction.type]);
 
   const availableCategories = useMemo(() => {
-    const categoryArray = activeIncome ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+    const categoryArray = activeIncome ? t.category.income : t.category.expense;
     onChange("category", categoryArray[0]);
     return categoryArray;
-  }, [activeIncome]);
+  }, [activeIncome, lng]);
 
   const onSubmit = async () => {
     if (!transaction.amount || Number(transaction.amount) <= 0) {
@@ -82,20 +83,20 @@ const Add = () => {
       const newTransition = await addTransaction(transaction);
 
       if (newTransition) {
-        Alert.alert("Успішно", "Транзакцію додано");
+        Alert.alert(t.successTitle, t.successMessage);
         setTransaction(initialTransactionState);
         Keyboard.dismiss();
       } else {
-        Alert.alert("Помилка", "Неможливо додати транзакцію");
+        Alert.alert(t.errorTitle, t.addError);
       }
     } catch (error) {
-      Alert.alert("Помилка", "Не вдало");
+      Alert.alert(t.errorTitle, t.unknownError);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Створити нову транзакцію</Text>
+      <Text style={styles.header}>{t.header}</Text>
 
       <View
         style={{
@@ -113,7 +114,7 @@ const Add = () => {
           <Text
             style={[styles.typeText, activeIncome && styles.typeTextActive]}
           >
-            Надходження
+            {t.income}
           </Text>
         </Pressable>
         <Pressable
@@ -126,26 +127,25 @@ const Add = () => {
           <Text
             style={[styles.typeText, !activeIncome && styles.typeTextActive]}
           >
-            Видатки
+            {t.expense}
           </Text>
         </Pressable>
       </View>
 
-      <Text style={styles.label}>Вкажіть суму</Text>
+      <Text style={styles.label}>{t.amountLabel}</Text>
       <TextInput
         style={styles.input}
-        placeholder="сума"
+        placeholder={t.amountPlaceholder}
         keyboardType="numeric"
         value={transaction.amount}
         onChangeText={(value) => onChange("amount", value)}
       />
-      <Text style={styles.label}>Виберіть категорію</Text>
+      <Text style={styles.label}>{t.categoryLabel}</Text>
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={transaction.category}
           onValueChange={(itemValue: string) => onChange("category", itemValue)}
           style={styles.picker}
-          placeholder="оберіть категорію"
           itemStyle={{ fontSize: 12 }}
         >
           {availableCategories.map((cat) => (
@@ -153,10 +153,10 @@ const Add = () => {
           ))}
         </Picker>
       </View>
-      <Text style={styles.label}>Додайте опис при необхідності</Text>
+      <Text style={styles.label}>{t.descriptionLabel}</Text>
       <TextInput
         nativeID="description"
-        placeholder="..."
+        placeholder={t.descriptionPlaceholder}
         style={styles.input}
         value={transaction.description?.toString() || ""}
         onChangeText={(value) => {
@@ -173,10 +173,8 @@ const Add = () => {
         }}
       >
         <Text style={styles.submitButtonText}>
-          {'Додати '}
-          {transaction.type === TransactionType.Income
-            ? " надходження"
-            : " видаток"}
+          {t.addButton}{" "}
+          {transaction.type === TransactionType.Income ? t.income : t.expense}
         </Text>
       </Pressable>
     </View>

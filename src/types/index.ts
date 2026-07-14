@@ -1,3 +1,5 @@
+import { Languages } from "../constants/constants";
+
 export type TransactionType = 'income' | 'expense';
 
 export interface Transaction {
@@ -21,6 +23,12 @@ export interface FinanceContextType {
     ) => Promise<Transaction>;
     fetchTransactions: () => Promise<void>; 
 }
+
+export interface LocaleContextType {
+    lng:Languages;
+    currency: string;
+}
+
 
 export interface AuthContextType {
     userId: string | null;

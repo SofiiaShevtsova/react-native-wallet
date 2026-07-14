@@ -1,5 +1,7 @@
 import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { useLng } from "../context/LocaleContext";
 import { formatAmount } from "../utils/formatAmount";
+import { barChartLocales } from "../locale/barChartLocales";
 
 const { width } = Dimensions.get("window");
 const CHART_WIDTH = width - 40;
@@ -10,9 +12,12 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, maxAmount }) => {
+  const { lng, currency } = useLng();
+  const t = barChartLocales[lng];
+
   if (data.length === 0) {
     return (
-      <Text style={styles.chartEmptyText}>Немає витрат за обраний період.</Text>
+      <Text style={styles.chartEmptyText}>{t.noExpenses}</Text>
     );
   }
 
@@ -37,7 +42,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, maxAmount }) => {
                 ]}
               />
               <Text style={styles.barAmount}>
-                {formatAmount(item.amount, "decimal")}
+                {formatAmount(item.amount, lng, currency, "decimal")}
               </Text>
             </View>
           </View>

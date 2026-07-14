@@ -1,34 +1,89 @@
-import React, { FC } from "react";
-import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
+import React, { FC, useState } from "react";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { Ionicons, Foundation } from "@expo/vector-icons";
 
-interface OnboardingProps {
-  onStart: () => void;
-}
+import { onboardingLocales } from "../locale/onboardingLocales";
+import { Languages } from "../constants/constants";
 
-const Onboarding: FC<OnboardingProps> = ({ onStart }) => {
+const languages: { code: Languages; title: string }[] = [
+  { code: "uk", title: "🇺🇦 Українська" },
+  { code: "pl", title: "🇵🇱 Polski" },
+  { code: "en", title: "🇬🇧 English" },
+];
+
+const currencies = [
+  { code: "UAH", title: "₴ UAH" },
+  { code: "USD", title: "$ USD" },
+  { code: "PLN", title: "zł PLN" },
+  { code: "EUR", title: "€ EUR" },
+];
+
+type OnboardingProps = {
+  onFinish: (language: Languages, currency: string) => void;
+};
+
+const Onboarding: FC<OnboardingProps> = ({ onFinish }) => {
+  const [language, setLanguage] = useState<Languages>("uk");
+  const [currency, setCurrency] = useState("UAH");
+
+  const t = onboardingLocales[language];
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Ionicons name="rocket-outline" size={64} color="#388E3C" />
-        <Text style={styles.title}>Ласкаво просимо!</Text>
-        <Text style={styles.subtitle}>
-          Ваш персональний помічник з фінансів.
-        </Text>
+        <Text style={styles.title}>{t.welcome}</Text>
+        <Text style={styles.subtitle}>{t.subtitle}</Text>
       </View>
 
       <View style={styles.block}>
-        <Text style={styles.sectionTitle}>Що це за додаток?</Text>
+        <Text style={styles.sectionTitle}>{t.aboutTitle}</Text>
         <Text style={styles.text}>
-          <Text style={styles.bold}>Мій Фінансовий Трекер</Text> — це інструмент
-          для простого й ефективного відстеження ваших доходів та витрат. Він
-          допомагає контролювати баланс та аналізувати, куди йдуть ваші кошти.
+          <Text style={styles.bold}>{t.appName}</Text>
+          {t.aboutPart1}
         </Text>
+        <Text style={styles.sectionTitle}>{t.languageTitle}</Text>
+        <View style={styles.blockWithBtn}>
+          {languages.map((item) => (
+            <Pressable
+              key={item.code}
+              onPress={() => setLanguage(item.code)}
+              style={
+                language === item.code
+                  ? styles.chosenButton
+                  : styles.buttonForChose
+              }
+            >
+              <Text style={styles.buttonChoseText}>{item.title}</Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={styles.sectionTitle}>{t.currencyTitle}</Text>
+        <View style={styles.blockWithBtn}>
+          {currencies.map((item) => (
+            <Pressable
+              key={item.code}
+              onPress={() => setCurrency(item.code)}
+              style={
+                currency === item.code
+                  ? styles.chosenButton
+                  : styles.buttonForChose
+              }
+            >
+              <Text style={styles.buttonChoseText}>{item.title}</Text>
+            </Pressable>
+          ))}
+        </View>
 
         <Text style={[styles.sectionTitle, { marginTop: 20 }]}>
-          Як користуватися?
+          {t.howToTitle}
         </Text>
-
         <View style={styles.card}>
           <Ionicons
             name="add-circle-outline"
@@ -38,15 +93,13 @@ const Onboarding: FC<OnboardingProps> = ({ onStart }) => {
           />
 
           <View style={styles.cardText}>
-            <Text style={styles.cardTitle}>1. Додайте транзакцію</Text>
+            <Text style={styles.cardTitle}>{t.step1Title}</Text>
             <Text style={styles.cardDescription}>
-              Перейдіть на вкладку <Text style={styles.bold}>“Додати”</Text>.
-              Вкажіть суму, оберіть тип транзакції (дохід чи витрата) та
-              категорію.
+              {t.step1Part1} <Text style={styles.bold}>{t.addTab}</Text>
+              {t.step1Part2}
             </Text>
           </View>
         </View>
-
         <View style={styles.card}>
           <Foundation
             name="list"
@@ -56,15 +109,14 @@ const Onboarding: FC<OnboardingProps> = ({ onStart }) => {
           />
 
           <View style={styles.cardText}>
-            <Text style={styles.cardTitle}>2. Перегляньте транзакції</Text>
+            <Text style={styles.cardTitle}>{t.step2Title}</Text>
             <Text style={styles.cardDescription}>
-              На вкладці <Text style={styles.bold}>Транзакції</Text> ви бачите
-              всі записи. Вони незмінні: якщо потрібно виправити — додайте нову
-              корекційну транзакцію.
+              {t.step2Part1}{" "}
+              <Text style={styles.bold}>{t.transactionsTab}</Text>{" "}
+              {t.step2Part2}
             </Text>
           </View>
         </View>
-
         <View style={styles.card}>
           <Foundation
             name="graph-trend"
@@ -74,18 +126,21 @@ const Onboarding: FC<OnboardingProps> = ({ onStart }) => {
           />
 
           <View style={styles.cardText}>
-            <Text style={styles.cardTitle}>3. Аналізуйте звіт</Text>
+            <Text style={styles.cardTitle}>{t.step3Title}</Text>
             <Text style={styles.cardDescription}>
-              Вкладка <Text style={styles.bold}>“Звіт”</Text> показує баланс та
-              статистику за обраний місяць.
+              {t.step3Part1} <Text style={styles.bold}>{t.reportTab}</Text>{" "}
+              {t.step3Part2}
             </Text>
           </View>
         </View>
       </View>
 
-      <Pressable onPress={onStart} style={styles.button}>
+      <Pressable
+        onPress={() => onFinish(language, currency)}
+        style={styles.button}
+      >
         <Ionicons name="checkmark-circle" size={22} color="#fff" />
-        <Text style={styles.buttonText}>Почати користування</Text>
+        <Text style={styles.buttonText}>{t.startButton}</Text>
       </Pressable>
     </ScrollView>
   );
@@ -116,6 +171,15 @@ const styles = StyleSheet.create({
   },
   block: {
     marginBottom: 40,
+  },
+  blockWithBtn: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBlockEnd: 12,
   },
   sectionTitle: {
     fontSize: 22,
@@ -162,6 +226,35 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 14,
     color: "#374151",
+  },
+  buttonForChose: {
+    backgroundColor: "#fff",
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#76BB4D",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    paddingHorizontal: 8,
+  },
+  chosenButton: {
+    backgroundColor: "#cff5b9",
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#76BB4D",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    paddingHorizontal: 8,
+  },
+  buttonChoseText: {
+    color: "#76BB4D",
+    fontWeight: "700",
+    fontSize: 16,
   },
   button: {
     backgroundColor: "#76BB4D",

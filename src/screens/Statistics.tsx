@@ -11,13 +11,18 @@ import { Picker } from "@react-native-picker/picker";
 import BarChart from "../components/BarChart";
 import LineChart from "../components/LineChart";
 import { useFinance } from "../context/FinanceContext";
-import { MONTH_NAMES_UA, TransactionType } from "../constants/constants";
+import { TransactionType } from "../constants/constants";
 import { formatAmount } from "../utils/formatAmount";
+import { useLng } from "../context/LocaleContext";
+import { statisticsLocales } from "../locale/statisticsLocales";
 
 const getCurrentYear = () => new Date().getFullYear();
 const YEARS = [getCurrentYear(), getCurrentYear() - 1, getCurrentYear() - 2];
 
 const Statistics = () => {
+  const { lng, currency } = useLng();
+  const t = statisticsLocales[lng];
+
   const { transactions, loading } = useFinance();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(getCurrentYear());
@@ -106,7 +111,7 @@ const Statistics = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Фінансовий Звіт</Text>
+      <Text style={styles.header}>{t.header}</Text>
       <View style={styles.selectorContainer}>
         <View style={[styles.pickerWrapper, { marginRight: 5 }]}>
           <Picker
@@ -114,7 +119,7 @@ const Statistics = () => {
             onValueChange={(itemValue) => setSelectedMonth(itemValue)}
             style={styles.picker}
           >
-            {MONTH_NAMES_UA.map((month, index) => (
+            {t.months.map((month, index) => (
               <Picker.Item key={index} label={month} value={index} />
             ))}
           </Picker>
@@ -133,14 +138,14 @@ const Statistics = () => {
       </View>
       <View style={styles.cardsContainer}>
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Загальний Баланс</Text>
+          <Text style={styles.cardTitle}>{t.balance}</Text>
           <Text
             style={[
               styles.cardValue,
               totalBalance >= 0 ? styles.incomeText : styles.expenseText,
             ]}
           >
-            {formatAmount(totalBalance)}
+            {formatAmount(totalBalance, lng, currency )}
           </Text>
         </View>
       </View>
@@ -148,23 +153,23 @@ const Statistics = () => {
       <View style={styles.monthlyStatsContainer}>
         <View style={styles.monthlyCardIncome}>
           <Text style={styles.monthlyTitle}>
-            Дохід ({MONTH_NAMES_UA[selectedMonth]})
+            {t.income} ({t.months[selectedMonth]})
           </Text>
-          <Text style={styles.incomeValue}>{formatAmount(monthlyIncome)}</Text>
+          <Text style={styles.incomeValue}>{formatAmount(monthlyIncome, lng, currency)}</Text>
         </View>
         <View style={styles.monthlyCardExpense}>
           <Text style={styles.monthlyTitle}>
-            Витрати ({MONTH_NAMES_UA[selectedMonth]})
+            {t.expenses} ({t.months[selectedMonth]})
           </Text>
           <Text style={styles.expenseValue}>
-            {formatAmount(monthlyExpense)}
+            {formatAmount(monthlyExpense, lng, currency)}
           </Text>
         </View>
       </View>
 
       <View style={styles.chartSection}>
         <Text style={styles.chartHeader}>
-          {`Динаміка Доходів та Витрат за ${selectedYear} рік`}
+          {`${t.dynamics} ${selectedYear} ${t.year}`}
         </Text>
         <LineChart
           incomeData={yearlyMonthlyIncome}
@@ -176,20 +181,20 @@ const Statistics = () => {
             <View
               style={[styles.legendColor, { backgroundColor: "#388E3C" }]}
             />
-            <Text style={styles.legendText}>Доходи</Text>
+            <Text style={styles.legendText}>{t.legendIncome}</Text>
           </View>
           <View style={styles.legendItem}>
             <View
               style={[styles.legendColor, { backgroundColor: "#D32F2F" }]}
             />
-            <Text style={styles.legendText}>Витрати</Text>
+            <Text style={styles.legendText}>{t.legendExpense}</Text>
           </View>
         </View>
       </View>
 
       <View style={[styles.chartSection, { marginTop: 15 }]}>
         <Text style={styles.chartHeader}>
-          {`Витрати за Категоріями (${MONTH_NAMES_UA[selectedMonth]})`}
+          {`${t.categoriesExpenses} (${t.months[selectedMonth]})`}
         </Text>
         <BarChart data={categoryExpenses} maxAmount={maxCategoryAmount} />
       </View>
