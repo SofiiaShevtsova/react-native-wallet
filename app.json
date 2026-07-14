@@ -16,6 +16,12 @@
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMobileAdsAppId": "YOUR_ADMOB_APP_ID"
+      },
+      "permissions": [
+        "com.google.android.gms.permission.AD_ID"
+      ],
       "package": "com.SofiSova.SofiSovaWallet",
       "versionCode": 1,
       "adaptiveIcon": {
